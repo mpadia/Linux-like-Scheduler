@@ -1,0 +1,50 @@
+/* user.c - main */
+
+#include <conf.h>
+#include <kernel.h>
+#include <proc.h>
+#include <stdio.h>
+#include <lab0.h>
+
+void halt();
+
+/*------------------------------------------------------------------------
+ *  main  --  user main program
+ *------------------------------------------------------------------------
+ */
+
+mypro(A) {
+ sleep(10);
+}
+
+int main()
+{
+  kprintf("\n\nHello World, Xinu lives\n\n");
+//  int a = 0;
+//  int d = 0;
+//  int b;
+//  int c;
+  //int *c = (int *) malloc (100);
+  printsegaddress();
+  printtos();
+  printprocstks(100);
+	syscallsummary_start();        
+	sleep(10);
+        getpid();
+        wait(10);
+        sleep(10);
+        signal(100);
+        sleep10(10);
+        getpid();
+//	syscallsummary_stop();	
+	printsyscalls();
+ 
+resume(create(mypro,20000,20,"mypro",1,'A'));
+getpid();    
+  long a = 0xAABBCCDD;
+  long b = zfunction(a);
+  kprintf("\nzfunction of 0xAABBCCDD is %x",b);
+        syscallsummary_stop();
+        printsyscalls();
+  return 0;
+}

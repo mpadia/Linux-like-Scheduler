@@ -1,0 +1,53 @@
+1) What are the advantages and disadvantages of each of the two scheduling policies and the original scheduling policy in XINU?
+
+ANS ->
+===============
+LINUX SCHEDULER
+===============
+Advantages
+1. The linux scheduler schedules a process run for the entire time quantum which results in fewer CPU clock cycles waste in context switch. Here we should not forget that process can  be switched before its quantum being completely utilized if it is suspended or does suicides(kills itself).
+
+2. The linux scheduler schedules the process based on its goodness value, where if the process have not used up its complete quantum in last epoch then it has been given consideratoin i.e. its goodness will just not be its priority. This helps in scheduling processes which are at same priority or lower priority process will not starveif it has not been able to utilize its quantum last time by increasing its goodness.
+
+Disadvantages
+1. If a process is created in between a epoch which has high priority, then currently scheduling policy keeps it waiting till end of the epoch which reduces the responsiveness of the system.
+
+2. If the priority is changed in between a epoch, then current scheduling policy does not take it into consideration till the endo of epoch wich will may lead to poor user experience. 
+
+3. Current implementation does not give enough priority to dynamic change in priority or creation of process.
+
+4. There is not concept of acutal round robin if two process with same goodness are there to select. The process which is selected will not give up CPU unless its finished/suspended/killed.
+
+
+=====================
+MULTI QUEUE SCHEDULER
+====================
+Advantages
+1.2. Same advantages as in Linux Scheduler.
+
+3. This scheduling policy gives control to user to priortize the real processes by creating them with createReal(). This will ensure that while considering the scheduling of CPU time to a process, it gives more priority to real process over normal process in ratio of (70% over 30%).
+
+4. In real process, the policy will do round robin among the processes will help in ensuring that whatever the priority of the process in real process queue, all are given equal goodness each time and improves the reponsiveness of the real process.
+
+Disadvantages
+1.2.3.4. Same disadvantages as in Linux Scheduler.
+
+5. Since the selection of real process vs normal process is based on random number generation in system, it may not gaurantee the fair ness of (70-30) across them. In other words, the fairness of policy is dependent on some pseudo random number generator of system.
+
+
+==============
+XINU SCHEDULER
+=============
+Advantages
+1. The process with maximum priority gets the CPU time untill that process finishes its quantum. 
+
+2. The round robin implemented in xinu scheduler is better for same priority processes than the type of scheduler implemented in project.
+
+3. Since the is no concept of epoch, as soon as someone changes the priority or process is created then effect is shown in ready queue. This may improve the responsive ness of the system if new process has high priority. Though sstill max priority process will be selected.
+
+Disadvantages
+1. Process starvation is biggest issue of xinu scheduler. Process with lower priority will never get chance till all higher priority process are completed.
+
+2. Since there is no concept of goodness, processes with same priority will always execute one after other even though if one process was suspended wwithout completing its full quantum rather giving more priority to previously suspended process.
+
+3. Xinu scheduler performance depend on size of quantum used at the start of system. If quantum value is small, a lot of processing time lost in CPU context switch, while is quantum is large, there is very poor response of system.
